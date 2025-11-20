@@ -1,20 +1,40 @@
 import EditableText from "./EditableText";
 import { useAwardStore } from "../../store/UseAwardStore";
+import { Textfit } from "react-textfit"; // Use the Next version for React 19
 
 export default function CertificateCanvas() {
-  const { leftLogo, rightLogo, awardLogo, setField } = useAwardStore();
+  const { leftLogo, rightLogo, awardLogo, setField, awardName } = useAwardStore();
 
   const upload = (field, file) => {
     const url = URL.createObjectURL(file);
     setField(field, url);
   };
 
+  const textSizes = {
+    awardName: { min: 20, max: 60 }, // tweak these numbers (px)
+    teamName: { min: 18, max: 80 },
+    default: { min: 14, max: 72 },
+  };
+
+  function sizesFor(field) {
+    return textSizes[field] || textSizes.default;
+  }
+
   return (
-    <div className="flex-1 bg-white p-8 text-center h-screen overflow-auto flex justify-center items-start">
-      {/* Certificate Preview Wrapper */}
-      <div className="bg-amber-200 shadow-2xl border border-amber-400 rounded-xl p-8 w-full max-w-4xl mt-10">
-        
-        {/* LOGOS */}
+    <div className="flex-1 p-8 text-center h-screen overflow-auto flex justify-center items-start bg-gray-100">
+      {/* Certificate Wrapper */}
+      <div
+        className="relative w-full max-w-4xl mt-10 p-8 rounded-xl shadow-2xl border-2 border-yellow-800
+                   bg-gradient-to-tr from-yellow-800 via-yellow-400 via-yellow-300 to-yellow-200 overflow-hidden"
+      >
+        {/* Shimmer overlay */}
+        <div
+          className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] 
+                     bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.3),transparent_60%)]
+                     rotate-45 pointer-events-none"
+        ></div>
+
+        {/* Logos */}
         <div className="flex justify-between mb-4 items-center">
           <div onClick={() => document.getElementById("left-logo").click()}>
             {leftLogo ? (
@@ -31,7 +51,9 @@ export default function CertificateCanvas() {
           </div>
 
           <div className="flex flex-col items-center">
-            <EditableText field="leagueName" className="text-5xl font-bold" />
+            <div className="font-bold text-center text-5xl">
+              <EditableText field="leagueName" />
+            </div>
             <p className="text-3xl font-bold mt-2">Fantasy Football League</p>
           </div>
 
@@ -50,7 +72,7 @@ export default function CertificateCanvas() {
           </div>
         </div>
 
-        {/* AWARD LOGO */}
+        {/* Award Logo */}
         <div
           className="mx-auto w-[20rem] h-[15rem] flex items-center justify-center"
           onClick={() => document.getElementById("award-logo").click()}
@@ -68,15 +90,44 @@ export default function CertificateCanvas() {
           />
         </div>
 
-        {/* TEXT FIELDS */}
-        <EditableText field="awardName" className="italic mt-1" />        
-        <EditableText field="teamName" className="text-4xl font-bold mt-2" />
-        <div className="italic pt-1">- managed & coached by -</div>
-        <EditableText field="coachName" className="text-4xl font-bold pt-1" />
+        {/* Top Award Name */}
+        <div className="italic mt-1 text-center">
+          <EditableText field="awardName" />
+        </div>
 
-        <EditableText field="description" className="mt-4 italic" />
-        <EditableText field="year" className="font-bold mt-3 text-5xl" />
-        <EditableText field="awardName" className="text-4xl font-bold mt-4 uppercase" />
+        {/* Team Name */}
+        <div className="text-4xl font-bold mt-2 text-center">
+          <EditableText field="teamName" />
+        </div>
+
+        <div className="italic pt-1">- managed & coached by -</div>
+
+        {/* Coach Name */}
+        <div className="text-4xl font-bold pt-1 text-center">
+          <EditableText field="coachName" />
+        </div>
+
+        {/* Description */}
+        <div className="mt-4 italic text-center">
+          <EditableText field="description" />
+        </div>
+
+        {/* Year */}
+        <div className="font-bold mt-3 text-5xl text-center">
+          <EditableText field="year" />
+        </div>
+
+        {/* Second Award Name (with Textfit and overflow safeguard) */}
+        <div className="w-full overflow-hidden pl-20 pr-20">
+          <Textfit
+            key={awardName}
+            mode="single"
+            {...sizesFor("awardName")}
+            className="font-bold mt-4 uppercase text-center"
+          >
+            <EditableText field="awardName" />
+          </Textfit>
+        </div>
       </div>
     </div>
   );

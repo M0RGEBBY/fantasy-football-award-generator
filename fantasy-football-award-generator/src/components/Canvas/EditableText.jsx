@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { useAwardStore } from "../../store/UseAwardStore";
 
-export default function EditableText({ field, className }) {
+export default forwardRef(function EditableText({ field, className }, ref) {
   const value = useAwardStore((s) => s[field]);
   const setField = useAwardStore((s) => s.setField);
   const [editing, setEditing] = useState(false);
 
   return editing ? (
     <input
+      ref={ref}
       autoFocus
       className={`border px-2 ${className}`}
       value={value}
@@ -16,6 +17,7 @@ export default function EditableText({ field, className }) {
     />
   ) : (
     <div
+      ref={ref}
       className={className}
       onClick={() => setEditing(true)}
       style={{ cursor: "pointer" }}
@@ -23,4 +25,4 @@ export default function EditableText({ field, className }) {
       {value || `[${field}]`}
     </div>
   );
-}
+});
