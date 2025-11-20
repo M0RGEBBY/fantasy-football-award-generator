@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAwardStore } from "../../store/useAwardStore";
+import { useAwardStore } from "../../store/UseAwardStore";
 
 export default function EditableText({ field, className }) {
   const value = useAwardStore((s) => s[field]);
