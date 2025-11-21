@@ -1,6 +1,7 @@
 import EditableText from "./EditableText";
 import { useAwardStore } from "../../store/UseAwardStore";
-import { Textfit } from "react-textfit"; // Use the Next version for React 19
+import { Textfit } from "react-textfit";
+import awardBg from '../../images/award background.png';
 
 export default function CertificateCanvas() {
   const { leftLogo, rightLogo, awardLogo, setField, awardName } = useAwardStore();
@@ -11,7 +12,7 @@ export default function CertificateCanvas() {
   };
 
   const textSizes = {
-    awardName: { min: 20, max: 60 }, // tweak these numbers (px)
+    awardName: { min: 15, max: 60 },
     teamName: { min: 18, max: 80 },
     default: { min: 14, max: 72 },
   };
@@ -21,24 +22,36 @@ export default function CertificateCanvas() {
   }
 
   return (
-    <div className="flex-1 p-8 text-center h-screen overflow-auto flex justify-center items-start bg-gray-100">
-      {/* Certificate Wrapper */}
+    <div className="w-full min-h-screen bg-gray-100 py-10 overflow-auto flex justify-center">
       <div
-        className="relative w-full max-w-4xl mt-10 p-8 rounded-xl shadow-2xl border-2 border-yellow-800
-                   bg-gradient-to-tr from-yellow-800 via-yellow-400 via-yellow-300 to-yellow-200 overflow-hidden"
+        className="relative p-8 rounded-xl overflow-hidden"
+        style={{
+          width: "11in",
+          height: "8.5in",
+          flex: "none",
+          border: "12px solid",
+          borderImage: "linear-gradient(45deg, #FFD700, #FFC107, #FFB300) 1",
+          boxShadow:
+            "0 0 40px rgba(255, 215, 0, 0.7), inset 0 0 30px rgba(255, 239, 180, 0.5)",
+          background: "linear-gradient(to top right, #FFD700, #FFC107, #FFB300)",
+        }}
       >
-        {/* Shimmer overlay */}
+        {/* Static Shimmer / highlights */}
         <div
-          className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] 
-                     bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.3),transparent_60%)]
-                     rotate-45 pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `
+              radial-gradient(circle at 25% 25%, rgba(255,255,255,0.15), transparent 60%),
+              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.15), transparent 60%)
+            `,
+          }}
         ></div>
 
         {/* Logos */}
         <div className="flex justify-between mb-4 items-center">
           <div onClick={() => document.getElementById("left-logo").click()}>
             {leftLogo ? (
-              <img src={leftLogo} className="w-20 h-20" />
+              <img src={leftLogo} className="w-25 h-25" />
             ) : (
               <span>[LOGO]</span>
             )}
@@ -59,7 +72,7 @@ export default function CertificateCanvas() {
 
           <div onClick={() => document.getElementById("right-logo").click()}>
             {rightLogo ? (
-              <img src={rightLogo} className="w-20 h-20" />
+              <img src={rightLogo} className="w-25 h-25" />
             ) : (
               <span>[LOGO]</span>
             )}
@@ -74,7 +87,7 @@ export default function CertificateCanvas() {
 
         {/* Award Logo */}
         <div
-          className="mx-auto w-[20rem] h-[15rem] flex items-center justify-center"
+          className="mx-auto w-[25rem] h-[15rem] flex items-center justify-center"
           onClick={() => document.getElementById("award-logo").click()}
         >
           {awardLogo ? (
@@ -91,42 +104,52 @@ export default function CertificateCanvas() {
         </div>
 
         {/* Top Award Name */}
-        <div className="italic mt-1 text-center">
+        <div className="italic mt-1 text-center text-xl">
           <EditableText field="awardName" />
         </div>
 
         {/* Team Name */}
-        <div className="text-4xl font-bold mt-2 text-center">
+        <div className="text-5xl font-bold mt-2 text-center">
           <EditableText field="teamName" />
         </div>
 
-        <div className="italic pt-1">- managed & coached by -</div>
+        <div className="italic pt-1 text-center text-lg">- managed & coached by -</div>
 
         {/* Coach Name */}
-        <div className="text-4xl font-bold pt-1 text-center">
+        <div className="text-5xl font-bold text-center">
           <EditableText field="coachName" />
         </div>
 
         {/* Description */}
-        <div className="mt-4 italic text-center">
+        <div className="mt-4 italic font-bold text-center mx-auto w-[80%] text-xl">
           <EditableText field="description" />
         </div>
 
         {/* Year */}
-        <div className="font-bold mt-3 text-5xl text-center">
-          <EditableText field="year" />
+        <div className="absolute bottom-26 left-0 w-full text-center">
+          <div className="font-bold text-5xl">
+            <EditableText field="year" />
+          </div>
         </div>
 
-        {/* Second Award Name (with Textfit and overflow safeguard) */}
-        <div className="w-full overflow-hidden pl-20 pr-20">
-          <Textfit
-            key={awardName}
-            mode="single"
-            {...sizesFor("awardName")}
-            className="font-bold mt-4 uppercase text-center"
-          >
-            <EditableText field="awardName" />
-          </Textfit>
+        {/* Bottom Award Banner */}
+        <div className="absolute bottom-2 left-0 w-full">
+          <img
+            src={awardBg}
+            alt="Award Background"
+            className="w-full object-contain pointer-events-none select-none"
+          />
+
+          <div className="absolute inset-0 flex items-center justify-center px-[220px]">
+            <Textfit
+              key={awardName}
+              mode="single"
+              {...sizesFor("awardName")}
+              className="font-bold uppercase text-center w-full"
+            >
+              <EditableText field="awardName" />
+            </Textfit>
+          </div>
         </div>
       </div>
     </div>
