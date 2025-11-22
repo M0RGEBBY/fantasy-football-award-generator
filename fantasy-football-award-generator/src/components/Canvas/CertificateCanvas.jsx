@@ -11,7 +11,13 @@ export default function CertificateCanvas() {
 
   const upload = (field, file) => {
     const url = URL.createObjectURL(file);
-    setField(field, url);
+    // if uploading a side logo, apply it to BOTH left and right slots
+    if (field === "leftLogo" || field === "rightLogo") {
+      setField("leftLogo", url);
+      setField("rightLogo", url);
+    } else {
+      setField(field, url);
+    }
   };
 
   const handlePrint = () => {
@@ -96,14 +102,14 @@ export default function CertificateCanvas() {
           <div className="flex items-center">
             <label
               htmlFor="left-logo"
-              className={leftLogo
+              className={(leftLogo || rightLogo)
                 ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
                 : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
               }
               title="Upload left logo"
             >
-              {leftLogo ? (
-                <img src={leftLogo} alt="Left logo" className="w-full h-full object-contain" />
+              {(leftLogo || rightLogo) ? (
+                <img src={leftLogo || rightLogo} alt="Left logo" className="w-full h-full object-contain" />
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="text-lg font-semibold">Upload</div>
@@ -125,14 +131,14 @@ export default function CertificateCanvas() {
           <div className="flex items-center">
             <label
               htmlFor="right-logo"
-              className={rightLogo
+              className={(leftLogo || rightLogo)
                 ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
                 : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
               }
               title="Upload right logo"
             >
-              {rightLogo ? (
-                <img src={rightLogo} alt="Right logo" className="w-full h-full object-contain" />
+              {(rightLogo || leftLogo) ? (
+                <img src={rightLogo || leftLogo} alt="Right logo" className="w-full h-full object-contain" />
               ) : (
                 <div className="flex flex-col items-center">
                   <div className="text-lg font-semibold">Upload</div>
