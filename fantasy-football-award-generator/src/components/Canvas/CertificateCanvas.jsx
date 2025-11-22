@@ -92,8 +92,25 @@ export default function CertificateCanvas() {
         ></div>
 
         <div className="flex justify-between mb-4 items-center relative z-10">
-          <div onClick={() => document.getElementById("left-logo").click()}>
-            {leftLogo ? <img src={leftLogo} className="w-25 h-25" /> : <span>[LOGO]</span>}
+          {/* LEFT LOGO */}
+          <div className="flex items-center">
+            <label
+              htmlFor="left-logo"
+              className={leftLogo
+                ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
+                : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
+              }
+              title="Upload left logo"
+            >
+              {leftLogo ? (
+                <img src={leftLogo} alt="Left logo" className="w-full h-full object-contain" />
+              ) : (
+                <div className="flex flex-col items-center">
+                  <div className="text-lg font-semibold">Upload</div>
+                  <div className="text-xs -mt-1">Left Logo</div>
+                </div>
+              )}
+            </label>
             <input type="file" className="hidden" id="left-logo" onChange={(e) => upload("leftLogo", e.target.files[0])} />
           </div>
 
@@ -104,17 +121,49 @@ export default function CertificateCanvas() {
             <p className="text-3xl font-bold mt-2 tracking-wide">Fantasy Football League</p>
           </div>
 
-          <div onClick={() => document.getElementById("right-logo").click()}>
-            {rightLogo ? <img src={rightLogo} className="w-25 h-25" /> : <span>[LOGO]</span>}
+          {/* RIGHT LOGO */}
+          <div className="flex items-center">
+            <label
+              htmlFor="right-logo"
+              className={rightLogo
+                ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
+                : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
+              }
+              title="Upload right logo"
+            >
+              {rightLogo ? (
+                <img src={rightLogo} alt="Right logo" className="w-full h-full object-contain" />
+              ) : (
+                <div className="flex flex-col items-center">
+                  <div className="text-lg font-semibold">Upload</div>
+                  <div className="text-xs -mt-1">Right Logo</div>
+                </div>
+              )}
+            </label>
             <input type="file" className="hidden" id="right-logo" onChange={(e) => upload("rightLogo", e.target.files[0])} />
           </div>
         </div>
 
-        <div
-          className="mx-auto w-[25rem] h-[15rem] flex items-center justify-center relative z-10"
-          onClick={() => document.getElementById("award-logo").click()}
-        >
-          {awardLogo ? <img src={awardLogo} className="max-h-full" /> : <span>Award Logo (Upload)</span>}
+        {/* AWARD LOGO (styled placeholder like side logos) */}
+        <div className="mx-auto w-[25rem] h-[15rem] relative z-10">
+          <label
+            htmlFor="award-logo"
+            className={awardLogo
+              ? "cursor-pointer w-full h-full rounded-md overflow-hidden flex items-center justify-center"
+              : "cursor-pointer w-full h-full flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50 overflow-hidden"
+            }
+            title="Upload award logo"
+          >
+            {awardLogo ? (
+              <img src={awardLogo} alt="Award logo" className="max-h-full max-w-full object-contain" />
+            ) : (
+              <div className="flex flex-col items-center">
+                <div className="text-lg font-semibold">Upload</div>
+                <div className="text-xs -mt-1">Award Logo</div>
+                <div className="text-xs mt-2 text-gray-700">Click to upload</div>
+              </div>
+            )}
+          </label>
           <input type="file" className="hidden" id="award-logo" onChange={(e) => upload("awardLogo", e.target.files[0])} />
         </div>
 
