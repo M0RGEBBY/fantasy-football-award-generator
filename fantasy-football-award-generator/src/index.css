@@ -1,3 +1,15 @@
 /* in your CSS file, e.g. src/index.css */
 @import "tailwindcss";
 
+.premium-gold-text {
+  background: linear-gradient(
+    to bottom right,
+    #fff7c2 0%,
+    #ffe680 35%,
+    #ffd43b 60%,
+    #c9a400 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(255, 210, 50, 0.4));
+}

@@ -7,9 +7,33 @@ export const useAwardStore = create((set) => ({
   description: "",
   year: new Date().getFullYear(),
   awardName: "",
-  leftLogo: null,
-  rightLogo: null,
+  leagueLogo: null,
+  leagueLogoFilename: "",
   awardLogo: null,
+  awardLogoFilename: "",
 
-  setField: (field, value) => set({ [field]: value }),
+  // setField supports legacy leftLogo/rightLogo keys by mapping them to leagueLogo
+  setField: (field, value) =>
+    set((state) => {
+      if (field === "leftLogo" || field === "rightLogo") {
+        return { ...state, leagueLogo: value };
+      }
+      if (field === "leftLogoFilename" || field === "rightLogoFilename") {
+        return { ...state, leagueLogoFilename: value };
+      }
+      if (field === "leagueLogo") {
+        // allow directly setting URL or null
+        return { ...state, leagueLogo: value };
+      }
+      if (field === "leagueLogoFilename") {
+        return { ...state, leagueLogoFilename: value };
+      }
+      if (field === "awardLogo") {
+        return { ...state, awardLogo: value };
+      }
+      if (field === "awardLogoFilename") {
+        return { ...state, awardLogoFilename: value };
+      }
+      return { ...state, [field]: value };
+    }),
 }));
