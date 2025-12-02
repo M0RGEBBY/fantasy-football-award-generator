@@ -86,18 +86,24 @@ export default function CertificateCanvas() {
   const requestTextfit = () => setTimeout(() => textfitRef.current?.fit?.(), 40);
 
   const goldTextStyle = {
-  color: "#996515", // darker gold
-  textShadow: `
-    0 1px 1px rgba(0,0,0,0.7),
-    0 1px 3px rgba(0,0,0,0.5),
-    0 0 1px rgba(153,101,21,0.3)
-  `,
-};
+    color: "#996515", // darker gold
+    textShadow: `
+      0 1px 1px rgba(0,0,0,0.7),
+      0 1px 3px rgba(0,0,0,0.5),
+      0 0 1px rgba(153,101,21,0.3)
+    `,
+  };
 
   return (
     <div
       className="w-full min-h-screen py-10 overflow-auto flex flex-col items-center bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${footballBg})` }}
+      style={{
+        backgroundImage: `
+          radial-gradient(circle, rgba(255,255,255,0) 60%, rgba(0,0,0,0.9) 100%),
+          url(${footballBg})
+        `,
+        backgroundBlendMode: "overlay",
+      }}
     >
       <div
         ref={certRef}
@@ -122,8 +128,16 @@ export default function CertificateCanvas() {
           backgroundBlendMode: "soft-light, overlay, overlay, normal",
         }}
       >
-        <div className="absolute inset-0 pointer-events-none rounded-xl" style={{ background: `linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent), linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.05))`, mixBlendMode: "soft-light" }} />
+        {/* Overlay gradients for shine */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-xl"
+          style={{
+            background: `linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent), linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.05))`,
+            mixBlendMode: "soft-light",
+          }}
+        />
 
+        {/* Top logos and league info */}
         <div className="flex justify-between mb-4 items-center relative z-10">
           <div className="flex items-center">
             <label
@@ -131,7 +145,9 @@ export default function CertificateCanvas() {
               className={leagueLogo ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden" : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"}
               title="Upload league logo"
             >
-              {leagueLogo ? <img src={leagueLogo} alt="League logo" className="w-full h-full object-contain rounded-md" /> : (
+              {leagueLogo ? (
+                <img src={leagueLogo} alt="League logo" className="w-full h-full object-contain rounded-md" />
+              ) : (
                 <div className="flex flex-col items-center">
                   <div className="text-lg font-semibold">Upload</div>
                   <div className="text-xs -mt-1">League Logo</div>
@@ -154,7 +170,9 @@ export default function CertificateCanvas() {
               className={leagueLogo ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden" : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"}
               title="Upload league logo"
             >
-              {leagueLogo ? <img src={leagueLogo} alt="League logo" className="w-full h-full object-contain rounded-md" /> : (
+              {leagueLogo ? (
+                <img src={leagueLogo} alt="League logo" className="w-full h-full object-contain rounded-md" />
+              ) : (
                 <div className="flex flex-col items-center">
                   <div className="text-lg font-semibold">Upload</div>
                   <div className="text-xs -mt-1">League Logo</div>
@@ -165,13 +183,16 @@ export default function CertificateCanvas() {
           </div>
         </div>
 
+        {/* Award Logo */}
         <div className="mx-auto w-[25rem] h-[15rem] relative z-10">
           <label
             htmlFor="award-logo"
             className={awardLogo ? "cursor-pointer w-full h-full rounded-md overflow-hidden flex items-center justify-center" : "cursor-pointer w-full h-full flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50 overflow-hidden"}
             title="Upload award logo"
           >
-            {awardLogo ? <img src={awardLogo} alt="Award logo" className="max-h-full max-w-full object-contain" /> : (
+            {awardLogo ? (
+              <img src={awardLogo} alt="Award logo" className="max-h-full max-w-full object-contain" />
+            ) : (
               <div className="flex flex-col items-center">
                 <div className="text-lg font-semibold">Upload</div>
                 <div className="text-xs -mt-1">Award Logo</div>
@@ -182,6 +203,7 @@ export default function CertificateCanvas() {
           <input type="file" className="hidden" id="award-logo" onChange={(e) => upload("awardLogo", e.target.files[0])} />
         </div>
 
+        {/* Award text */}
         <div className="italic mt-1 text-center text-xl tracking-wide relative z-10" style={goldTextStyle}>
           <EditableText field="awardName" />
         </div>
@@ -196,9 +218,19 @@ export default function CertificateCanvas() {
           <EditableText field="coachName" />
         </div>
 
+        {/* Description */}
         <div
           className="mt-4 italic text-center mx-auto w-[80%] text-xl tracking-wide relative z-10"
-          style={{ ...goldTextStyle, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}
+          style={{
+            ...goldTextStyle,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "normal",
+            textShadow: "0 1px 1px rgba(0,0,0,0.5)",
+          }}
         >
           <EditableText field="description" />
         </div>
@@ -219,10 +251,12 @@ export default function CertificateCanvas() {
         </div>
       </div>
 
+      {/* Print button */}
       <button
         onClick={handlePrint}
         className="
-          mt-8
+          mt-20
+          cursor-pointer
           w-[11in]
           text-3xl
           font-bold
