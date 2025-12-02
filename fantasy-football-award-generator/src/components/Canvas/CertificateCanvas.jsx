@@ -197,7 +197,7 @@ export default function CertificateCanvas() {
         </div>
 
         <div
-          className="mt-4 italic font-bold text-center mx-auto w-[80%] text-xl tracking-wide relative z-10"
+          className="mt-4 italic text-center mx-auto w-[80%] text-xl tracking-wide relative z-10"
           style={{ ...goldTextStyle, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}
         >
           <EditableText field="description" />
