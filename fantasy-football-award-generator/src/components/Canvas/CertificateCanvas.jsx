@@ -1,40 +1,70 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import EditableText from "./EditableText";
 import { useAwardStore } from "../../store/UseAwardStore";
 import { Textfit } from "react-textfit";
 import awardBg from "../../images/award background.png";
+import footballBg from "../../images/footballbackground.png";
 
 export default function CertificateCanvas() {
   const { leagueLogo, awardLogo, setField, awardName } = useAwardStore();
   const certRef = useRef();
+  const textfitRef = useRef(null);
 
   const upload = (field, file) => {
     const url = URL.createObjectURL(file);
-    setField(field, url);
+    if (field === "leagueLogo") {
+      setField("leagueLogo", url);
+      setField("leagueLogoFilename", file.name);
+    } else if (field === "awardLogo") {
+      setField("awardLogo", url);
+      setField("awardLogoFilename", file.name);
+    } else {
+      setField(field, url);
+    }
   };
+
+  useEffect(() => {
+    textfitRef.current?.fit?.();
+  }, [awardName]);
 
   const handlePrint = () => {
     if (!certRef.current) return;
 
     const prevOverflow = document.body.style.overflow;
+
     const styleEl = document.createElement("style");
     styleEl.id = "temp-certificate-print-style";
     styleEl.innerHTML = `
       @page { size: 11in 8.5in; margin: 0; }
-      @media print {
-        body * { visibility: hidden !important; }
-        .printable-certificate, .printable-certificate * { visibility: visible !important; }
-        .printable-certificate { position: absolute !important; left: 0; top: 0; width: 100% !important; }
-      }
-      .printable-certificate { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    `;
-    document.head.appendChild(styleEl);
 
+      @media print {
+        body * {
+          visibility: hidden !important;
+        }
+        .printable-certificate, .printable-certificate * {
+          visibility: visible !important;
+        }
+        .printable-certificate {
+          position: absolute !important;
+          left: 0;
+          top: 0;
+          width: 100% !important;
+        }
+      }
+
+      .printable-certificate {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    `;
+
+    document.head.appendChild(styleEl);
     certRef.current.classList.add("printable-certificate");
     document.body.style.overflow = "hidden";
 
     setTimeout(() => {
       window.print();
+
       setTimeout(() => {
         certRef.current?.classList.remove("printable-certificate");
         const el = document.getElementById("temp-certificate-print-style");
@@ -49,11 +79,26 @@ export default function CertificateCanvas() {
     teamName: { min: 18, max: 80 },
     default: { min: 14, max: 72 },
   };
+  function sizesFor(field) {
+    return textSizes[field] || textSizes.default;
+  }
 
-  const sizesFor = (field) => textSizes[field] || textSizes.default;
+  const requestTextfit = () => setTimeout(() => textfitRef.current?.fit?.(), 40);
+
+  const goldTextStyle = {
+  color: "#996515", // darker gold
+  textShadow: `
+    0 1px 1px rgba(0,0,0,0.7),
+    0 1px 3px rgba(0,0,0,0.5),
+    0 0 1px rgba(153,101,21,0.3)
+  `,
+};
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 py-10 overflow-auto flex flex-col items-center">
+    <div
+      className="w-full min-h-screen py-10 overflow-auto flex flex-col items-center bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${footballBg})` }}
+    >
       <div
         ref={certRef}
         className="relative p-8 rounded-xl overflow-hidden"
@@ -77,108 +122,89 @@ export default function CertificateCanvas() {
           backgroundBlendMode: "soft-light, overlay, overlay, normal",
         }}
       >
-        {/* TOP LOGO ROW */}
+        <div className="absolute inset-0 pointer-events-none rounded-xl" style={{ background: `linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent), linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.05))`, mixBlendMode: "soft-light" }} />
+
         <div className="flex justify-between mb-4 items-center relative z-10">
-
-          {/* LEFT LOGO */}
-          <label
-            htmlFor="left-logo"
-            className={
-              leagueLogo
-                ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
-                : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
-            }
-          >
-            {leagueLogo ? (
-              <img src={leagueLogo} alt="League Logo" className="w-full h-full object-contain" />
-            ) : (
-              <div className="text-center text-xs">Upload Logo</div>
-            )}
-          </label>
-          <input
-            id="left-logo"
-            type="file"
-            className="hidden"
-            onChange={(e) => upload("leagueLogo", e.target.files[0])}
-          />
-
-          {/* MIDDLE TITLE */}
-          <div className="flex flex-col items-center">
-            <div className="font-bold text-center text-5xl tracking-wide drop-shadow-md">
-              <EditableText field="leagueName" />
-            </div>
-            <p className="text-3xl font-bold mt-2 tracking-wide">Fantasy Football League</p>
+          <div className="flex items-center">
+            <label
+              htmlFor="league-logo"
+              className={leagueLogo ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden" : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"}
+              title="Upload league logo"
+            >
+              {leagueLogo ? <img src={leagueLogo} alt="League logo" className="w-full h-full object-contain rounded-md" /> : (
+                <div className="flex flex-col items-center">
+                  <div className="text-lg font-semibold">Upload</div>
+                  <div className="text-xs -mt-1">League Logo</div>
+                </div>
+              )}
+            </label>
+            <input type="file" className="hidden" id="league-logo" onChange={(e) => upload("leagueLogo", e.target.files[0])} accept="image/*" />
           </div>
 
-          {/* RIGHT LOGO (same leagueLogo) */}
-          <label
-            htmlFor="right-logo"
-            className={
-              leagueLogo
-                ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
-                : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
-            }
-          >
-            {leagueLogo ? (
-              <img src={leagueLogo} alt="League Logo" className="w-full h-full object-contain" />
-            ) : (
-              <div className="text-center text-xs">Upload Logo</div>
-            )}
-          </label>
-          <input
-            id="right-logo"
-            type="file"
-            className="hidden"
-            onChange={(e) => upload("leagueLogo", e.target.files[0])}
-          />
+          <div className="flex flex-col items-center">
+            <div className="font-bold text-center text-5xl tracking-wide drop-shadow-md" style={goldTextStyle}>
+              <EditableText field="leagueName" />
+            </div>
+            <p className="text-3xl font-bold mt-2 tracking-wide" style={goldTextStyle}>Fantasy Football League</p>
+          </div>
+
+          <div className="flex items-center">
+            <label
+              htmlFor="league-logo"
+              className={leagueLogo ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden" : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"}
+              title="Upload league logo"
+            >
+              {leagueLogo ? <img src={leagueLogo} alt="League logo" className="w-full h-full object-contain rounded-md" /> : (
+                <div className="flex flex-col items-center">
+                  <div className="text-lg font-semibold">Upload</div>
+                  <div className="text-xs -mt-1">League Logo</div>
+                </div>
+              )}
+            </label>
+            <input type="file" className="hidden" id="league-logo" onChange={(e) => upload("leagueLogo", e.target.files[0])} accept="image/*" />
+          </div>
         </div>
 
-        {/* AWARD LOGO */}
         <div className="mx-auto w-[25rem] h-[15rem] relative z-10">
           <label
             htmlFor="award-logo"
-            className={
-              awardLogo
-                ? "cursor-pointer w-full h-full rounded-md overflow-hidden flex items-center justify-center"
-                : "cursor-pointer w-full h-full flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
-            }
+            className={awardLogo ? "cursor-pointer w-full h-full rounded-md overflow-hidden flex items-center justify-center" : "cursor-pointer w-full h-full flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50 overflow-hidden"}
+            title="Upload award logo"
           >
-            {awardLogo ? (
-              <img src={awardLogo} alt="Award Logo" className="max-h-full max-w-full object-contain" />
-            ) : (
-              <div className="text-center text-xs">Upload Award Logo</div>
+            {awardLogo ? <img src={awardLogo} alt="Award logo" className="max-h-full max-w-full object-contain" /> : (
+              <div className="flex flex-col items-center">
+                <div className="text-lg font-semibold">Upload</div>
+                <div className="text-xs -mt-1">Award Logo</div>
+                <div className="text-xs mt-2 text-gray-700">Click to upload</div>
+              </div>
             )}
           </label>
-          <input
-            id="award-logo"
-            type="file"
-            className="hidden"
-            onChange={(e) => upload("awardLogo", e.target.files[0])}
-          />
+          <input type="file" className="hidden" id="award-logo" onChange={(e) => upload("awardLogo", e.target.files[0])} />
         </div>
 
-        {/* TEXT SECTIONS */}
-        <div className="italic mt-1 text-center text-xl tracking-wide relative z-10">
+        <div className="italic mt-1 text-center text-xl tracking-wide relative z-10" style={goldTextStyle}>
           <EditableText field="awardName" />
         </div>
 
-        <div className="text-5xl font-bold mt-2 text-center tracking-wide relative z-10 drop-shadow-md">
+        <div className="text-5xl font-bold mt-2 text-center tracking-wide relative z-10 drop-shadow-md" style={goldTextStyle}>
           <EditableText field="teamName" />
         </div>
 
-        <div className="italic pt-1 text-center text-lg relative z-10">- managed & coached by -</div>
+        <div className="italic pt-1 text-center text-lg relative z-10" style={goldTextStyle}>- managed & coached by -</div>
 
-        <div className="text-5xl font-bold text-center tracking-wide relative z-10 drop-shadow-md">
+        <div className="text-5xl font-bold text-center tracking-wide relative z-10 drop-shadow-md" style={goldTextStyle}>
           <EditableText field="coachName" />
         </div>
 
-        <div className="mt-4 italic font-bold text-center mx-auto w-[80%] text-xl tracking-wide relative z-10">
+        <div
+          className="mt-4 italic font-bold text-center mx-auto w-[80%] text-xl tracking-wide relative z-10"
+          style={{ ...goldTextStyle, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "normal" }}
+        >
           <EditableText field="description" />
         </div>
 
-        {/* YEAR WITH BACKGROUND */}
         <div className="absolute bottom-26 left-0 right-0 z-10 px-4">
-          <div className="font-bold text-5xl tracking-wide drop-shadow-md text-center">
+          <div className="font-bold text-5xl tracking-wide drop-shadow-md text-center" style={goldTextStyle}>
             <EditableText field="year" />
           </div>
         </div>
@@ -186,12 +212,7 @@ export default function CertificateCanvas() {
         <div className="absolute bottom-2 left-0 right-0 z-10 px-4">
           <img src={awardBg} alt="Award Background" className="w-full object-contain pointer-events-none select-none" />
           <div className="absolute inset-0 flex items-center justify-center px-[220px]">
-            <Textfit
-              key={awardName}
-              mode="single"
-              {...sizesFor("awardName")}
-              className="font-bold uppercase text-center w-full tracking-wide drop-shadow-md"
-            >
+            <Textfit key={awardName} mode="single" {...sizesFor("awardName")} className="font-bold uppercase text-center w-full tracking-wide drop-shadow-md" style={goldTextStyle}>
               <EditableText field="awardName" />
             </Textfit>
           </div>
@@ -200,9 +221,26 @@ export default function CertificateCanvas() {
 
       <button
         onClick={handlePrint}
-        className="mt-6 bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-blue-800 transition tracking-wide"
+        className="
+          mt-8
+          w-[11in]
+          text-3xl
+          font-bold
+          py-5
+          rounded-2xl
+          tracking-wide
+          shadow-[0_0_25px_rgba(255,215,0,0.6)]
+          transition
+          bg-gradient-to-br
+          from-yellow-300
+          via-yellow-400
+          to-yellow-600
+          text-yellow-900
+          hover:brightness-110
+          hover:shadow-[0_0_35px_rgba(255,215,0,0.8)]
+        "
       >
-        Print Certificate
+        Print Award Certificate
       </button>
     </div>
   );
