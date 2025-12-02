@@ -5,19 +5,12 @@ import { Textfit } from "react-textfit";
 import awardBg from "../../images/award background.png";
 
 export default function CertificateCanvas() {
-  const { leftLogo, rightLogo, awardLogo, setField, awardName } = useAwardStore();
-
+  const { leagueLogo, awardLogo, setField, awardName } = useAwardStore();
   const certRef = useRef();
 
   const upload = (field, file) => {
     const url = URL.createObjectURL(file);
-    // if uploading a side logo, apply it to BOTH left and right slots
-    if (field === "leftLogo" || field === "rightLogo") {
-      setField("leftLogo", url);
-      setField("rightLogo", url);
-    } else {
-      setField(field, url);
-    }
+    setField(field, url);
   };
 
   const handlePrint = () => {
@@ -57,9 +50,7 @@ export default function CertificateCanvas() {
     default: { min: 14, max: 72 },
   };
 
-  function sizesFor(field) {
-    return textSizes[field] || textSizes.default;
-  }
+  const sizesFor = (field) => textSizes[field] || textSizes.default;
 
   return (
     <div className="w-full min-h-screen bg-gray-100 py-10 overflow-auto flex flex-col items-center">
@@ -86,40 +77,32 @@ export default function CertificateCanvas() {
           backgroundBlendMode: "soft-light, overlay, overlay, normal",
         }}
       >
-        <div
-          className="absolute inset-0 pointer-events-none rounded-xl"
-          style={{
-            background: `
-              linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent),
-              linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.05))
-            `,
-            mixBlendMode: "soft-light",
-          }}
-        ></div>
-
+        {/* TOP LOGO ROW */}
         <div className="flex justify-between mb-4 items-center relative z-10">
+
           {/* LEFT LOGO */}
-          <div className="flex items-center">
-            <label
-              htmlFor="left-logo"
-              className={(leftLogo || rightLogo)
+          <label
+            htmlFor="left-logo"
+            className={
+              leagueLogo
                 ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
                 : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
-              }
-              title="Upload left logo"
-            >
-              {(leftLogo || rightLogo) ? (
-                <img src={leftLogo || rightLogo} alt="Left logo" className="w-full h-full object-contain" />
-              ) : (
-                <div className="flex flex-col items-center">
-                  <div className="text-lg font-semibold">Upload</div>
-                  <div className="text-xs -mt-1">Left Logo</div>
-                </div>
-              )}
-            </label>
-            <input type="file" className="hidden" id="left-logo" onChange={(e) => upload("leftLogo", e.target.files[0])} />
-          </div>
+            }
+          >
+            {leagueLogo ? (
+              <img src={leagueLogo} alt="League Logo" className="w-full h-full object-contain" />
+            ) : (
+              <div className="text-center text-xs">Upload Logo</div>
+            )}
+          </label>
+          <input
+            id="left-logo"
+            type="file"
+            className="hidden"
+            onChange={(e) => upload("leagueLogo", e.target.files[0])}
+          />
 
+          {/* MIDDLE TITLE */}
           <div className="flex flex-col items-center">
             <div className="font-bold text-center text-5xl tracking-wide drop-shadow-md">
               <EditableText field="leagueName" />
@@ -127,52 +110,54 @@ export default function CertificateCanvas() {
             <p className="text-3xl font-bold mt-2 tracking-wide">Fantasy Football League</p>
           </div>
 
-          {/* RIGHT LOGO */}
-          <div className="flex items-center">
-            <label
-              htmlFor="right-logo"
-              className={(leftLogo || rightLogo)
+          {/* RIGHT LOGO (same leagueLogo) */}
+          <label
+            htmlFor="right-logo"
+            className={
+              leagueLogo
                 ? "cursor-pointer w-28 h-28 rounded-md overflow-hidden"
                 : "cursor-pointer w-28 h-28 flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
-              }
-              title="Upload right logo"
-            >
-              {(rightLogo || leftLogo) ? (
-                <img src={rightLogo || leftLogo} alt="Right logo" className="w-full h-full object-contain" />
-              ) : (
-                <div className="flex flex-col items-center">
-                  <div className="text-lg font-semibold">Upload</div>
-                  <div className="text-xs -mt-1">Right Logo</div>
-                </div>
-              )}
-            </label>
-            <input type="file" className="hidden" id="right-logo" onChange={(e) => upload("rightLogo", e.target.files[0])} />
-          </div>
+            }
+          >
+            {leagueLogo ? (
+              <img src={leagueLogo} alt="League Logo" className="w-full h-full object-contain" />
+            ) : (
+              <div className="text-center text-xs">Upload Logo</div>
+            )}
+          </label>
+          <input
+            id="right-logo"
+            type="file"
+            className="hidden"
+            onChange={(e) => upload("leagueLogo", e.target.files[0])}
+          />
         </div>
 
-        {/* AWARD LOGO (styled placeholder like side logos) */}
+        {/* AWARD LOGO */}
         <div className="mx-auto w-[25rem] h-[15rem] relative z-10">
           <label
             htmlFor="award-logo"
-            className={awardLogo
-              ? "cursor-pointer w-full h-full rounded-md overflow-hidden flex items-center justify-center"
-              : "cursor-pointer w-full h-full flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50 overflow-hidden"
+            className={
+              awardLogo
+                ? "cursor-pointer w-full h-full rounded-md overflow-hidden flex items-center justify-center"
+                : "cursor-pointer w-full h-full flex items-center justify-center rounded-md border-2 border-dashed border-yellow-800 bg-yellow-50/40 text-center text-sm text-yellow-900 shadow-sm hover:bg-yellow-50"
             }
-            title="Upload award logo"
           >
             {awardLogo ? (
-              <img src={awardLogo} alt="Award logo" className="max-h-full max-w-full object-contain" />
+              <img src={awardLogo} alt="Award Logo" className="max-h-full max-w-full object-contain" />
             ) : (
-              <div className="flex flex-col items-center">
-                <div className="text-lg font-semibold">Upload</div>
-                <div className="text-xs -mt-1">Award Logo</div>
-                <div className="text-xs mt-2 text-gray-700">Click to upload</div>
-              </div>
+              <div className="text-center text-xs">Upload Award Logo</div>
             )}
           </label>
-          <input type="file" className="hidden" id="award-logo" onChange={(e) => upload("awardLogo", e.target.files[0])} />
+          <input
+            id="award-logo"
+            type="file"
+            className="hidden"
+            onChange={(e) => upload("awardLogo", e.target.files[0])}
+          />
         </div>
 
+        {/* TEXT SECTIONS */}
         <div className="italic mt-1 text-center text-xl tracking-wide relative z-10">
           <EditableText field="awardName" />
         </div>
@@ -191,6 +176,7 @@ export default function CertificateCanvas() {
           <EditableText field="description" />
         </div>
 
+        {/* YEAR WITH BACKGROUND */}
         <div className="absolute bottom-26 left-0 right-0 z-10 px-4">
           <div className="font-bold text-5xl tracking-wide drop-shadow-md text-center">
             <EditableText field="year" />
@@ -200,7 +186,12 @@ export default function CertificateCanvas() {
         <div className="absolute bottom-2 left-0 right-0 z-10 px-4">
           <img src={awardBg} alt="Award Background" className="w-full object-contain pointer-events-none select-none" />
           <div className="absolute inset-0 flex items-center justify-center px-[220px]">
-            <Textfit key={awardName} mode="single" {...sizesFor("awardName")} className="font-bold uppercase text-center w-full tracking-wide drop-shadow-md">
+            <Textfit
+              key={awardName}
+              mode="single"
+              {...sizesFor("awardName")}
+              className="font-bold uppercase text-center w-full tracking-wide drop-shadow-md"
+            >
               <EditableText field="awardName" />
             </Textfit>
           </div>
