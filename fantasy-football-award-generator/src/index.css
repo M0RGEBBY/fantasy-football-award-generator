@@ -1,15 +1,114 @@
-/* in your CSS file, e.g. src/index.css */
 @import "tailwindcss";
 
+/* GOLD SHIMMER TEXT */
 .premium-gold-text {
   background: linear-gradient(
-    to bottom right,
-    #fff7c2 0%,
-    #ffe680 35%,
-    #ffd43b 60%,
-    #c9a400 100%
+    90deg,
+    #d4af37 0%,
+    #f7e99c 20%,
+    #b38a28 40%,
+    #d4af37 60%,
+    #f1d675 80%,
+    #b38a28 100%
   );
+  background-size: 200% auto;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 8px rgba(255, 210, 50, 0.4));
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 3s linear infinite;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+/* DARK MODERN SCROLLBAR */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #3a3a3a;
+  border-radius: 10px;
+  border: 2px solid #0f0f0f;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #4b4b4b;
+}
+
+/* PREMIUM HEADER BACKGROUND */
+.premium-header {
+  background: radial-gradient(circle at center, #1a1a1d 0%, #0c0c0e 70%, #000 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: visible; /* allows text shadows & particles to show */
+}
+
+/* FLOATING GOLD PARTICLES */
+.gold-particles {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 215, 85, 0.45) 2px, transparent 2px);
+  background-size: 4px 4px;
+  opacity: 0.15;
+  animation: particlesMove 15s linear infinite;
+}
+@keyframes particlesMove {
+  from { background-position: 0 0; }
+  to   { background-position: 400px 400px; }
+}
+
+/* TWINKLING SPARKLES ON TITLE */
+.premium-title {
+  position: relative;
+  display: inline-block;
+}
+.premium-title::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: url("data:image/svg+xml,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>\
+    <circle cx='20' cy='20' r='2' fill='gold'/>\
+    <circle cx='80' cy='50' r='1.5' fill='gold'/>\
+    <circle cx='140' cy='30' r='1' fill='gold'/>\
+    <circle cx='60' cy='120' r='2.2' fill='gold'/>\
+    <circle cx='160' cy='160' r='1.8' fill='gold'/>\
+  </svg>");
+  opacity: 0.2;
+  transform: translateX(-50%);
+  animation: sparkleTwinkle 6s ease-in-out infinite alternate;
+}
+@keyframes sparkleTwinkle {
+  0% { opacity: 0.15; }
+  100% { opacity: 0.4; }
+}
+
+/* PULSING GOLD UNDERLINE */
+.premium-underline {
+  width: 60%;
+  height: 4px;
+  margin: 10px auto 0 auto;
+  border-radius: 50px;
+  background: linear-gradient(90deg, transparent, gold, transparent);
+  animation: underlinePulse 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px gold);
+}
+@keyframes underlinePulse {
+  0%   { transform: scaleX(0.7); opacity: 0.4; }
+  50%  { transform: scaleX(1);   opacity: 1;   }
+  100% { transform: scaleX(0.7); opacity: 0.4; }
 }
