@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import EditableText from "./EditableText";
 import { useAwardStore } from "../../store/UseAwardStore";
-import { Textfit } from "react-textfit";
+import { Textfit } from "@dalee9000/react19-ts-textfit";
 import awardBg from "../../images/award background.png";
 import footballBg from "../../images/footballbackground.png";
 
