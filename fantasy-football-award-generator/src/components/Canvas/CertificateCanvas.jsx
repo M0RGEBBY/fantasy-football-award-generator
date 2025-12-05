@@ -35,9 +35,19 @@ export default function CertificateCanvas() {
     const styleEl = document.createElement("style");
     styleEl.id = "temp-certificate-print-style";
     styleEl.innerHTML = `
-      @page { size: 11in 8.5in; margin: 0; }
+      @page { 
+        size: 11in 8.5in; 
+        margin: 0 !important; 
+      }
 
       @media print {
+        /* Force margin/padding removal on root elements */
+        html, body {
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+        }
+        
         body * {
           visibility: hidden !important;
         }
@@ -45,10 +55,16 @@ export default function CertificateCanvas() {
           visibility: visible !important;
         }
         .printable-certificate {
-          position: absolute !important;
-          left: 0;
-          top: 0;
-          width: 100% !important;
+          /* Set precise dimensions with border-box for cross-browser consistency */
+          position: absolute !important; 
+          left: 0 !important;
+          top: 0 !important;
+          width: 11in !important;
+          height: 8.5in !important;
+          box-sizing: border-box !important; 
+          
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
       }
 
@@ -86,7 +102,7 @@ export default function CertificateCanvas() {
   const requestTextfit = () => setTimeout(() => textfitRef.current?.fit?.(), 40);
 
   const goldTextStyle = {
-    color: "#996515", // darker gold
+    color: "#996515", 
     textShadow: `
       0 1px 1px rgba(0,0,0,0.7),
       0 1px 3px rgba(0,0,0,0.5),
@@ -128,7 +144,6 @@ export default function CertificateCanvas() {
           backgroundBlendMode: "soft-light, overlay, overlay, normal",
         }}
       >
-        {/* Overlay gradients for shine */}
         <div
           className="absolute inset-0 pointer-events-none rounded-xl"
           style={{
@@ -137,7 +152,6 @@ export default function CertificateCanvas() {
           }}
         />
 
-        {/* Top logos and league info */}
         <div className="flex justify-between mb-4 items-center relative z-10">
           <div className="flex items-center">
             <label
@@ -183,7 +197,6 @@ export default function CertificateCanvas() {
           </div>
         </div>
 
-        {/* Award Logo */}
         <div className="mx-auto w-[25rem] h-[15rem] relative z-10">
           <label
             htmlFor="award-logo"
@@ -203,7 +216,6 @@ export default function CertificateCanvas() {
           <input type="file" className="hidden" id="award-logo" onChange={(e) => upload("awardLogo", e.target.files[0])} />
         </div>
 
-        {/* Award text */}
         <div className="italic mt-1 text-center text-xl tracking-wide relative z-10" style={goldTextStyle}>
           <EditableText field="awardName" />
         </div>
@@ -218,7 +230,6 @@ export default function CertificateCanvas() {
           <EditableText field="coachName" />
         </div>
 
-        {/* Description */}
         <div
           className="mt-4 italic text-center mx-auto w-[80%] text-xl tracking-wide relative z-10"
           style={{
@@ -251,7 +262,6 @@ export default function CertificateCanvas() {
         </div>
       </div>
 
-      {/* Print button */}
       <button
         onClick={handlePrint}
         className="
