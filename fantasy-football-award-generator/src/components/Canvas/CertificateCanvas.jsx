@@ -112,7 +112,8 @@ export default function CertificateCanvas() {
 
   return (
     <div
-      className="w-full min-h-screen py-10 overflow-auto flex flex-col items-center bg-cover bg-center bg-no-repeat"
+      // FIX: Changed classes here to ensure scrolling works within the App's container
+      className="w-full py-10 overflow-auto flex flex-col items-center bg-cover bg-center bg-no-repeat flex-1"
       style={{
         backgroundImage: `
           radial-gradient(circle, rgba(255,255,255,0) 60%, rgba(0,0,0,0.9) 100%),
@@ -265,7 +266,7 @@ export default function CertificateCanvas() {
       <button
         onClick={handlePrint}
         className="
-          mt-20
+          mt-10   /* FIX: Reduced margin-top from mt-20 to mt-10 */
           cursor-pointer
           w-[11in]
           text-3xl
